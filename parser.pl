@@ -1,6 +1,8 @@
 :- dynamic expected/2, ctree/4, ptree/5.
+% defined as:
 % ctree(From, To, A, AlphaBBeta)
 % ptree(From, To, A, AlphaBBeta, CGamma)
+
 load_grammar(Grammar) :-
     consult(Grammar).
 
@@ -69,7 +71,7 @@ clear :-
     %retractall(ptree),
     %retractall(expected),
     (forall(ctree(I,J,A,Alpha),retract(ctree(I,J,A,Alpha))); true),
-    (forall(ptree(I,J,A,AlphaBBeta,CGamma),retract(ctree(I,J,A,AlphaBBeta,CGamma)));true),
+    (forall(ptree(I,J,A,AlphaBBeta,CGamma),retract(ptree(I,J,A,AlphaBBeta,CGamma)));true),
     (forall(expected(Pos,Cat),retract(expected(Pos,Cat))); true)
     .
 leftcorner(WordList,Result) :-
