@@ -3,6 +3,9 @@
 % ctree(From, To, A, AlphaBBeta)
 % ptree(From, To, A, AlphaBBeta, CGamma)
 
+% Uncomment for debug output:
+% debug_print.
+
 load_grammar(Grammar) :-
     consult(Grammar).
 
@@ -116,7 +119,7 @@ scan(WordList,I,J,Rest) :-
     J is I+1,
     lex(Cat,Word),
     add_fact(ctree(I,J,Cat,Word)),
-%    print('scan'),nl,
+    (current_predicate(debug_print/0),print('scan'),nl,listing(ctree),nl;true),
     false
     .
 scan(WordList,I,J,Rest) :-
@@ -127,7 +130,7 @@ scan(WordList,I,J,Rest) :-
 expect :-
     ptree(_I,J,_A,_Alpha,[B|_Beta]),
     add_fact(expected(J,B)),
-%    print('expect'),nl,
+    (current_predicate(debug_print/0),print('expect'),nl,listing(expected),nl;true),
     false.
 expect.
 
@@ -136,7 +139,7 @@ predict([NextWord|_Rest]) :-
     ctree(I,J,D,_Delta),
     predicted(E,D,NextWord,A,AlphaBBeta,CGamma),
     add_fact(ptree(I,J,A,AlphaBBeta,CGamma)),
-%    print('predict'),nl,
+    (current_predicate(debug_print/0),print('predict'),nl,listing(ptree),nl;true),
     false
     .
 predict(_).
@@ -148,7 +151,7 @@ complete1 :-
     forall(member(X,Beta),deletable(X)),
     append(Alpha,[B|Beta],AlphaBBeta),
     add_fact(ctree(I,J,A,AlphaBBeta)),
-%    print('complete1'),nl,
+    (current_predicate(debug_print/0),print('complete1'),nl,listing(ctree),nl;true),
     false
     .
 complete1.
@@ -163,7 +166,7 @@ complete2([NextWord|_Rest],End) :-
     lc_star(NextWord,C),
     append(Alpha,[B|Beta],AlphaBBeta),
     add_fact(ptree(I,J,A,AlphaBBeta,[C|Gamma])),
-%    print('complete2'),nl,
+    (current_predicate(debug_print/0),print('complete2'),nl,listing(ctree),nl;true),
     false
     .
 complete2(_,_).
