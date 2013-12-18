@@ -7,6 +7,9 @@
 % debug_print.
 % data_print.
 
+% Number of forced iterations
+max_iter(2).
+
 load_grammar(Grammar) :-
     consult(Grammar).
 
@@ -137,6 +140,9 @@ scan(WordList,I,J,Rest) :-
     lex(_Cat,Word).
 
 expect :-
+    max_iter(M),
+    numlist(0,M,Counter),
+    member(_X,Counter),
     ptree(_I,J,_A,_Alpha,[B|_Beta]),
     add_fact(expected(J,B)),
     (current_predicate(debug_print/0),print('expect'),nl;true),
@@ -145,6 +151,9 @@ expect :-
 expect.
 
 predict([NextWord|_Rest]) :-
+    max_iter(M),
+    numlist(0,M,Counter),
+    member(_X,Counter),
     expected(I,E),
     ctree(I,J,D,_Delta),
     predicted(E,D,NextWord,A,AlphaBBeta,CGamma),
@@ -156,6 +165,9 @@ predict([NextWord|_Rest]) :-
 predict(_).
 
 complete1 :-
+    max_iter(M),
+    numlist(0,M,Counter),
+    member(_X,Counter),
     chain(B,D),
     ptree(I,K,A,Alpha,[B|Beta]),
     ctree(K,J,D,_Delta),
@@ -169,6 +181,9 @@ complete1 :-
 complete1.
 
 complete2([NextWord|_Rest],End) :-
+    max_iter(M),
+    numlist(0,M,Counter),
+    member(_X,Counter),
     chain(B,D),
     ptree(I,K,A,Alpha,[B|BetaCGamma]),
     append(Beta,[C|Gamma],BetaCGamma),
