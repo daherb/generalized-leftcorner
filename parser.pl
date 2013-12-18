@@ -5,6 +5,7 @@
 
 % Uncomment for debug output:
 % debug_print.
+% data_print.
 
 load_grammar(Grammar) :-
     consult(Grammar).
@@ -81,7 +82,8 @@ leftcorner(WordList,Result) :-
     % Clean up everything
     clear,
     length(WordList,EndPos),
-    (current_predicate(debug_print/0),print('start'),nl,listing(expected),nl;true),
+    (current_predicate(debug_print/0),print('start'),nl;true),
+    (current_predicate(data_print/0),listing(expected),nl;true),
     start,
     (leftcorner(WordList,0,EndPos); true),
     startsymbol(S),
@@ -90,20 +92,26 @@ leftcorner(WordList,Result) :-
 
 % Reached End of parse
 leftcorner(_,End,End) :-
-    (current_predicate(debug_print/0),print('complete1'),nl,listing(ctree),nl;true),
+    (current_predicate(debug_print/0),print('complete1'),nl;true),
+    (current_predicate(data_print/0),listing(ctree),nl;true),
     complete1
     .
 
 leftcorner(WordList,Pos,End) :-
-    (current_predicate(debug_print/0),print('scan'),nl,listing(ctree),nl;true),
+    (current_predicate(debug_print/0),print('scan'),nl;true),
+    (current_predicate(data_print/0),listing(ctree),nl;true),
     scan(WordList,Pos,NPos,Rest),
-    (current_predicate(debug_print/0),print('complete1'),nl,listing(ctree),nl;true),
+    (current_predicate(debug_print/0),print('complete1'),nl;true),
+    (current_predicate(data_print/0),listing(ctree),nl;true),
     complete1,
-    (current_predicate(debug_print/0),print('complete2'),nl,listing(ptree),nl;true),
+    (current_predicate(debug_print/0),print('complete2'),nl;true),
+    (current_predicate(data_print/0),listing(ptree),nl;true),
     complete2(Rest,End),
-    (current_predicate(debug_print/0),print('predict'),nl,listing(ptree),nl;true),
+    (current_predicate(debug_print/0),print('predict'),nl;true),
+    (current_predicate(data_print/0),listing(ptree),nl;true),
     predict(Rest),
-    (current_predicate(debug_print/0),print('expect'),nl,listing(expected),nl;true),
+    (current_predicate(debug_print/0),print('expect'),nl;true),
+    (current_predicate(data_print/0),listing(expected),nl;true),
     expect,
     leftcorner(Rest,NPos,End)
     .
@@ -119,7 +127,8 @@ scan(WordList,I,J,Rest) :-
     J is I+1,
     lex(Cat,Word),
     add_fact(ctree(I,J,Cat,Word)),
-    (current_predicate(debug_print/0),print('scan'),nl,listing(ctree),nl;true),
+    (current_predicate(debug_print/0),print('scan'),nl;true),
+    (current_predicate(data_print/0),listing(ctree),nl;true),
     false
     .
 scan(WordList,I,J,Rest) :-
@@ -130,7 +139,8 @@ scan(WordList,I,J,Rest) :-
 expect :-
     ptree(_I,J,_A,_Alpha,[B|_Beta]),
     add_fact(expected(J,B)),
-    (current_predicate(debug_print/0),print('expect'),nl,listing(expected),nl;true),
+    (current_predicate(debug_print/0),print('expect'),nl;true),
+    (current_predicate(data_print/0),listing(expected),nl;true),
     false.
 expect.
 
@@ -139,7 +149,8 @@ predict([NextWord|_Rest]) :-
     ctree(I,J,D,_Delta),
     predicted(E,D,NextWord,A,AlphaBBeta,CGamma),
     add_fact(ptree(I,J,A,AlphaBBeta,CGamma)),
-    (current_predicate(debug_print/0),print('predict'),nl,listing(ptree),nl;true),
+    (current_predicate(debug_print/0),print('predict'),nl;true),
+    (current_predicate(data_print/0),listing(ptree),nl;true),
     false
     .
 predict(_).
@@ -151,7 +162,8 @@ complete1 :-
     forall(member(X,Beta),deletable(X)),
     append(Alpha,[B|Beta],AlphaBBeta),
     add_fact(ctree(I,J,A,AlphaBBeta)),
-    (current_predicate(debug_print/0),print('complete1'),nl,listing(ctree),nl;true),
+    (current_predicate(debug_print/0),print('complete1'),nl;true),
+    (current_predicate(data_print/0),listing(ctree),nl;true),
     false
     .
 complete1.
@@ -166,7 +178,8 @@ complete2([NextWord|_Rest],End) :-
     lc_star(NextWord,C),
     append(Alpha,[B|Beta],AlphaBBeta),
     add_fact(ptree(I,J,A,AlphaBBeta,[C|Gamma])),
-    (current_predicate(debug_print/0),print('complete2'),nl,listing(ctree),nl;true),
+    (current_predicate(debug_print/0),print('complete2'),nl;true),
+    (current_predicate(data_print/0),listing(ctree),nl;true),
     false
     .
 complete2(_,_).
