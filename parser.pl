@@ -8,7 +8,7 @@
 % data_print.
 
 % Number of forced iterations
-max_iter(2).
+max_iter(1).
 
 load_grammar(Grammar) :-
     consult(Grammar).
@@ -74,12 +74,12 @@ add_fact(Tree) :-
     .
 
 clear :-
-    %retractall(ctree),
-    %retractall(ptree),
-    %retractall(expected),
-    (forall(ctree(I,J,A,Alpha),retract(ctree(I,J,A,Alpha))); true),
-    (forall(ptree(I,J,A,AlphaBBeta,CGamma),retract(ptree(I,J,A,AlphaBBeta,CGamma)));true),
-    (forall(expected(Pos,Cat),retract(expected(Pos,Cat))); true)
+    retractall(ctree(_,_,_,_)),
+    retractall(ptree(_,_,_,_,_)),
+    retractall(expected(_,_))%,
+    %(forall(ctree(I,J,A,Alpha),retract(ctree(I,J,A,Alpha))); true),
+    %(forall(ptree(I,J,A,AlphaBBeta,CGamma),retract(ptree(I,J,A,AlphaBBeta,CGamma)));true),
+    %(forall(expected(Pos,Cat),retract(expected(Pos,Cat))); true)
     .
 leftcorner(WordList,Result) :-
     % Clean up everything
@@ -88,7 +88,7 @@ leftcorner(WordList,Result) :-
     (current_predicate(debug_print/0),print('start'),nl;true),
     (current_predicate(data_print/0),listing(expected),nl;true),
     start,
-    (leftcorner(WordList,0,EndPos); true),
+ (leftcorner(WordList,0,EndPos); true),
     startsymbol(S),
     build_result(S,0,EndPos,Result),!
     .
@@ -184,6 +184,7 @@ complete2([NextWord|_Rest],End) :-
     max_iter(M),
     numlist(0,M,Counter),
     member(_X,Counter),
+
     chain(B,D),
     ptree(I,K,A,Alpha,[B|BetaCGamma]),
     append(Beta,[C|Gamma],BetaCGamma),
@@ -191,7 +192,9 @@ complete2([NextWord|_Rest],End) :-
     forall(member(X,Beta),deletable(X)),
     J<End,
     lc_star(NextWord,C),
+
     append(Alpha,[B|Beta],AlphaBBeta),
+
     add_fact(ptree(I,J,A,AlphaBBeta,[C|Gamma])),
     (current_predicate(debug_print/0),print('complete2'),nl;true),
     (current_predicate(data_print/0),listing(ctree),nl;true),
